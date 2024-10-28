@@ -7,7 +7,7 @@ public class AddressMapper {
 
     public static AddressResponse mapModelToResponse(Address address) {
         return AddressResponse.builder()
-                .id(address.getId())
+                .addressId(address.getId())
                 .street(address.getStreet())
                 .city(address.getCity())
                 .build();

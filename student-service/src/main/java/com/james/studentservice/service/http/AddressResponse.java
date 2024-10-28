@@ -1,4 +1,4 @@
-package com.james.addressservice.Presentation.dto;
+package com.james.studentservice.service.http;
 
 import lombok.*;
 
