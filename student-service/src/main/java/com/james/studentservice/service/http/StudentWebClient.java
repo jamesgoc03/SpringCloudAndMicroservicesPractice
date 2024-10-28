@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class StudentWebClient {
 
-    @Value("${address.service.url}")
+    @Value("${address.service.url}/api/address")
     private String addressServiceUrl;
 
     @Bean
