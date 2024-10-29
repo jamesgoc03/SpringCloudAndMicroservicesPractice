@@ -6,11 +6,9 @@ import com.james.studentservice.helper.mapper.StudentMapper;
 import com.james.studentservice.persistence.model.Student;
 import com.james.studentservice.persistence.repository.StudentRepository;
 import com.james.studentservice.service.feignClient.AddressFeignClient;
-import com.james.studentservice.service.http.AddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -27,6 +25,9 @@ public class StudentServiceImpl {
 	@Autowired
 	AddressFeignClient addressFeignClient;
 
+	@Autowired
+	CommonService commonService;
+
 	public StudentResponse createStudent(CreateStudentRequest createStudentRequest) {
 		Student student = Student.builder()
 				.firstName(createStudentRequest.getFirstName())
@@ -37,7 +38,7 @@ public class StudentServiceImpl {
 		student = studentRepository.save(student);
 
 		StudentResponse studentResponse = StudentMapper.mapModelToResponse(student);
-		studentResponse.setAddressResponse(addressFeignClient.getById(student.getAddressId()));
+		studentResponse.setAddressResponse(commonService.getAddressById(student.getAddressId()));
 		//studentResponse.setAddressResponse(getAddressById(student.getAddressId()));
 		return studentResponse;
 	}
@@ -47,16 +48,10 @@ public class StudentServiceImpl {
 		if(student.isEmpty())
 			throw new NoSuchElementException("The studen with id " + id + " does not exist.");
 		StudentResponse studentResponse = StudentMapper.mapModelToResponse(student.get());
-		studentResponse.setAddressResponse(addressFeignClient.getById(student.get().getAddressId()));
+		studentResponse.setAddressResponse(commonService.getAddressById(student.get().getAddressId()));
 		//studentResponse.setAddressResponse(getAddressById(student.get().getAddressId()));
 		return studentResponse;
 	}
 
-	public AddressResponse getAddressById (Long addressId) {
-		Mono<AddressResponse> addressResponse =
-				webClient.get().uri("/getById/" + addressId)
-				.retrieve().bodyToMono(AddressResponse.class);
-		return addressResponse.block();
-	}
 
 }
